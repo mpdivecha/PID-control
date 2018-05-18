@@ -1,5 +1,6 @@
 #include <uWS/uWS.h>
 #include <iostream>
+#include <fstream>
 #include "json.hpp"
 #include "PID.h"
 #include <math.h>
@@ -96,21 +97,36 @@ double handleMessage(uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length, 
     }
 }
 
-int test(double sParams[], double tParams[]);
+struct InfoPackage {
+    int cnt = 0;
+    double cte,speed,steering_angle;
+    std::ofstream outfile;
+};
+
+int test(double sParams[], double tParams[], InfoPackage& info);
 int twiddle();
 
 int main()
 {
-    double sParams[3] = {0.2, 0, 3.31};
+    //return twiddle();
+
+    InfoPackage pack;
+    pack.outfile.open("temp.txt", std::ios::out);
+    double sParams[3] = {0.15, 0.0, 3.31};        // {0.2, 0, 3.31};
     double tParams[3] = {0.1, 0, 1.0};
-    return test(sParams, tParams);
+    std::vector<double> cte_history;
+
+    int res = test(sParams, tParams, pack);
+
+    //for (const auto &e : cte_history) outFile << e << "\n";
+    return res;
 }
 
 /** Test the PID with some values
  * @param double[] sParams  The steering PID parameters
  * @param double[] tParams  The throttle PID parameters
  */
-int test(double sParams[], double tParams[])
+int test(double sParams[], double tParams[], InfoPackage& pack)
 {
     uWS::Hub h;
     double throttle = throttleMean;
@@ -118,13 +134,15 @@ int test(double sParams[], double tParams[])
     PID pid;
     PID throttle_pid;
     // TODO: Initialize the pid variable.
+    std::cout << "Initing PIDs\n";
     pid.Init(sParams[0], sParams[1], sParams[2]);
     throttle_pid.Init(tParams[0], tParams[1], tParams[2]);
 
-    h.onMessage([&pid, &throttle, &throttle_pid](uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length, uWS::OpCode opCode) {
+    h.onMessage([&pid, &throttle, &throttle_pid, &pack](uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length, uWS::OpCode opCode) {
         // "42" at the start of the message means there's a websocket message event.
         // The 4 signifies a websocket message
         // The 2 signifies a websocket event
+        //std::cout << std::string(data).substr(0, length) << std::endl;
         if (length && length > 2 && data[0] == '4' && data[1] == '2')
         {
             auto s = hasData(std::string(data).substr(0, length));
@@ -132,6 +150,7 @@ int test(double sParams[], double tParams[])
             {
                 auto j = json::parse(s);
                 std::string event = j[0].get<std::string>();
+                //std::cout << "j: " << j << std::endl;
                 if (event == "telemetry")
                 {
                     // j[1] is the data JSON object
@@ -145,6 +164,7 @@ int test(double sParams[], double tParams[])
                      * NOTE: Feel free to play around with the throttle and speed. Maybe use
                      * another PID controller to control the speed!
                     */
+                    std::cout << "Updating pid\n";
                     pid.UpdateError(cte);
                     steer_value = pid.TotalError();
                     // Constrain the steering angle
@@ -156,14 +176,29 @@ int test(double sParams[], double tParams[])
                     // Update and get throttle value. It is contrained to be around
                     //  the value of throttle we want
                     throttle_pid.UpdateError(cte);
-                    throttle = throttleMean - throttle_pid.TotalError();
+                    throttle = throttleMean;// - throttle_pid.TotalError();
 
                     // Don't let throttle get beyond a certain maximum
                     if (throttle >= throttleMax)
                         throttle = throttleMax;
 
                     // DEBUG
-                    std::cout << "CTE: " << cte << " Steering Value: " << steer_value << std::endl;
+                    pack.cnt++;
+                    if (pack.cnt < 1250)
+                    {
+                        pack.cte = cte;
+                        pack.speed = speed;
+                        pack.steering_angle = angle;
+                        pack.outfile << pack.cnt << "," << cte << "," << speed << "," << angle << "\n";
+                    }
+                    else if (pack.outfile.is_open() && pack.cnt >= 1250)
+                    {
+                        pack.outfile.close();
+                    }
+                    std::cout << "CTE: " << cte << " Steering Value: " << steer_value << " cnt: " << pack.cnt << std::endl;
+                    //cte_history.push_back(cte);
+                    //outfile << cte << "\n";
+                    //outfile.flush();
 
                     json msgJson;
                     msgJson["steering_angle"] = steer_value;
