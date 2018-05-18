@@ -30,7 +30,7 @@ Here, $\alpha$ is the steering angle. CTE is the cross track error received from
 
 #### Effects of parameters
 
-The following graph shows the effect of each P and D parameters when they are set to 0(while keeping other parameters constant) vs that of a finely tuned PID. As can be seen, for the properly tuned controller, the CTE remains fairly constant, around 0. When $\tau_p$ is set 0, the CTE doesn't converge to 0. On the other hand, when $\tau_d$ is set to 0, the CTE oscillates. This is due to the linear effect of a non-zero \$\tau_p$ on the steering angle.
+The following graph shows the effect of each P and D parameters when they are set to 0(while keeping other parameters constant) vs that of a finely tuned PID. As can be seen, for the properly tuned controller, the CTE remains fairly constant, around 0. When $\tau_p$ is set 0, the CTE doesn't converge to 0. On the other hand, when $\tau_d$ is set to 0, the CTE oscillates. This is due to the linear effect of a non-zero $\tau_p$ on the steering angle.
 
 ![Plot](plot.png)
 

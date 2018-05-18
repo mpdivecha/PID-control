@@ -28,7 +28,7 @@ Here, <img src="svgs/c745b9b57c145ec5577b82542b2df546.svg?invert_in_darkmode&san
 
 #### Effects of parameters
 
-The following graph shows the effect of each P and D parameters when they are set to 0(while keeping other parameters constant) vs that of a finely tuned PID. As can be seen, for the properly tuned controller, the CTE remains fairly constant, around 0. When <img src="svgs/b4fa3d7e922d1998dd79bb21f2b9b528.svg?invert_in_darkmode&sanitize=true" align=middle width=13.91049pt height=14.10255pt/> is set 0, the CTE doesn't converge to 0. On the other hand, when <img src="svgs/247f5654139da0a68843534e5d493f43.svg?invert_in_darkmode&sanitize=true" align=middle width=13.97682pt height=14.10255pt/> is set to 0, the CTE oscillates. This is due to the linear effect of a non-zero \$\tau_p$ on the steering angle.
+The following graph shows the effect of each P and D parameters when they are set to 0(while keeping other parameters constant) vs that of a finely tuned PID. As can be seen, for the properly tuned controller, the CTE remains fairly constant, around 0. When <img src="svgs/b4fa3d7e922d1998dd79bb21f2b9b528.svg?invert_in_darkmode&sanitize=true" align=middle width=13.91049pt height=14.10255pt/> is set 0, the CTE doesn't converge to 0. On the other hand, when <img src="svgs/247f5654139da0a68843534e5d493f43.svg?invert_in_darkmode&sanitize=true" align=middle width=13.97682pt height=14.10255pt/> is set to 0, the CTE oscillates. This is due to the linear effect of a non-zero <img src="svgs/b4fa3d7e922d1998dd79bb21f2b9b528.svg?invert_in_darkmode&sanitize=true" align=middle width=13.91049pt height=14.10255pt/> on the steering angle.
 
 ![Plot](plot.png)
 
