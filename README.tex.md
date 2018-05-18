@@ -24,7 +24,9 @@ The PID is modeled as follows:
 $$
 \alpha = -\tau_p CTE -\tau_i \sum CTE - \tau_d \frac{d}{dt}CTE
 $$
-Here, $\alpha$ is the steering angle. CTE is the cross track error received from the simulator. Here, $\tau_p$, $\tau_i$ and $\tau_d$ are the parameters for each of the PID terms of the controller. I use the twiddle algorithm to find the best set of parameters for the project. It can be found in the code [here](src/main.cpp#L257). It should be noted that I ran twiddle a couple times, each time with initializing it with the parameters I got from the previous runs. The final set of parameters I have used are $\tau_{p,i,d} = \{0.15, 0, 3.31\}$.
+
+
+Here, $\alpha$ is the steering angle. CTE is the cross track error received from the simulator. $\tau_p$, $\tau_i$ and $\tau_d$ are the parameters for each of the PID terms of the controller. I use the twiddle algorithm to find the best set of parameters for the project. It can be found in the code [here](src/main.cpp#L257). It should be noted that I ran twiddle a couple times, each time with initializing it with the parameters I got from the previous runs. The final set of parameters I have used are $\tau_{p,i,d} = \{0.15, 0, 3.31\}$.
 
 #### Effects of parameters
 
